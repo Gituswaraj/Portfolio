@@ -27,7 +27,7 @@ const Projects = () => {
       image: '/portfolio.jpg.png', 
       tags: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion'],
       github: 'https://github.com/Gituswaraj',
-      demo: 'null'
+      demo: 'https://portfolio-git-main-swarajs-projects-69d918fd.vercel.app/'
     },
     {
       title: 'TourPhin',
