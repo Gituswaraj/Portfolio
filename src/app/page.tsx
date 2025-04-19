@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
@@ -11,6 +11,8 @@ import Education from '@/components/sections/Education';
 import Certifications from '@/components/sections/Certifications';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/Footer';
+import CustomCursor from '@/components/ui/CustomCursor';
+import ParticleBackground from '@/components/ui/ParticleBackground';
 
 export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -40,8 +42,28 @@ export default function Home() {
     setIsDarkMode(!isDarkMode);
   };
 
+  // Track scroll position for particle effect interaction
+  const scrollRef = useRef(null);
+  const [scrollY, setScrollY] = useState(0);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div 
+      className="min-h-screen bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 transition-colors duration-300"
+      ref={scrollRef}
+    >
+      <CustomCursor />
+      <div className="fixed inset-0 -z-10">
+        <ParticleBackground isDarkMode={isDarkMode} scrollFactor={scrollY * 0.01} />
+      </div>
       <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
       <Hero />
       <About />
