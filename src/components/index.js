@@ -15,3 +15,14 @@ export { default as CertificateCard } from './ui/CertificateCard';
 export { default as SkillCard } from './ui/SkillCard';
 export { default as SectionTitle } from './ui/SectionTitle';
 export { default as Footer } from './Footer';
+
+// Export new UI components
+export { default as CustomCursor } from './ui/CustomCursor';
+export { default as ScrollAnimation } from './ui/ScrollAnimation';
+export { default as PageTransition } from './ui/PageTransition';
+export { default as ParallaxBackground } from './ui/ParallaxBackground';
+export { default as InteractiveTimeline } from './ui/InteractiveTimeline';
+export { default as ProjectDetail } from './ui/ProjectDetail';
+
+// Export 3D components
+export { ThreeDModel, ThreeDIcon, ThreeDProjectShowcase, getSkillIconProps } from './ui/3d';
