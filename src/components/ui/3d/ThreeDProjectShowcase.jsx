@@ -76,7 +76,6 @@ const ProjectCard = ({ project, index, totalProjects, onClick }) => {
 
 // Main component that wraps the 3D project showcase in a Canvas
 const ThreeDProjectShowcase = ({ projects, onProjectSelect }) => {
-  const [autoRotate, setAutoRotate] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isClient, setIsClient] = useState(false);
   
@@ -102,12 +101,11 @@ const ThreeDProjectShowcase = ({ projects, onProjectSelect }) => {
   }, []);
   
   const handleProjectClick = (project) => {
-    setAutoRotate(false);
     if (onProjectSelect) {
       onProjectSelect(project);
     }
   };
-  
+
   // Render a placeholder if not on client side
   if (!isClient) {
     return (
@@ -140,21 +138,34 @@ const ThreeDProjectShowcase = ({ projects, onProjectSelect }) => {
             polar={[-Math.PI / 4, Math.PI / 4]}
             azimuth={[-Math.PI / 4, Math.PI / 4]}
           >
-            <group rotation={[0, autoRotate ? -performance.now() * 0.0001 : 0, 0]}>
-              {projects.map((project, index) => (
-                <ProjectCard
-                  key={index}
-                  project={project}
-                  index={index}
-                  totalProjects={projects.length}
-                  onClick={handleProjectClick}
-                />
-              ))}
-            </group>
+            <RotatingGroup projects={projects} onProjectSelect={handleProjectClick} />
           </PresentationControls>
         </Canvas>
       )}
     </motion.div>
+  );
+};
+
+// Component for continuous rotation
+const RotatingGroup = ({ children, projects, onProjectSelect }) => {
+  const groupRef = useRef();
+  useFrame(() => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += 0.005; // Adjust rotation speed here
+    }
+  });
+  return (
+    <group ref={groupRef}>
+      {projects.map((project, index) => (
+        <ProjectCard
+          key={index}
+          project={project}
+          index={index}
+          totalProjects={projects.length}
+          onClick={onProjectSelect}
+        />
+      ))}
+    </group>
   );
 };
 

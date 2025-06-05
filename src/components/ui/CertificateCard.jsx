@@ -19,12 +19,15 @@ const CertificateCard = ({ title, issuer, date, image, link }) => {
     >
       <div className="relative overflow-hidden h-40 cursor-pointer" onClick={() => setIsOpen(true)}>
         {image && (
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover hover:scale-105 transition-transform duration-300"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src={image}
+              alt={title}
+              fill
+              style={{ objectFit: 'cover' }}
+              className="hover:scale-105 transition-transform duration-300"
+            />
+          </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end">
           <div className="p-4 text-white">

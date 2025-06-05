@@ -9,7 +9,7 @@ import { ThreeDProjectShowcase } from '../ui/3d';
 import ScrollAnimation from '../ui/ScrollAnimation';
 
 const Projects = ({ darkMode }) => {
-  const [viewMode, setViewMode] = useState('classic'); // '3d' or 'classic'
+  const [viewMode, setViewMode] = useState('classic'); // Changed from '3d' to 'classic'
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef(null);
@@ -76,18 +76,33 @@ const Projects = ({ darkMode }) => {
       videoUrl: null,
       tags: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion'],
       github: 'https://github.com/Gituswaraj',
-      demo: 'https://portfolio-git-main-swarajs-projects-69d918fd.vercel.app/'
-    }
+      demo: 'portfolio-six-khaki-21.vercel.app'
+    },
+    {
+       title: 'Tastemate',
+       description: 'An AI-powered MERN stack web app that personalizes meals based on user preferences and reduces food waste in hostels/PGs. Includes smart facility control, chatbot feedback, and an admin panel for efficient resource management.',
+       image: '/tastemate-image.png',
+       longDescription: 'A full-stack AI-integrated web application built using the MERN stack, designed to optimize food distribution and facility management in hostels and PG accommodations. The system personalizes daily meal suggestions based on individual user preferences, eating habits, and feedback. It includes a smart chatbot that interacts with users to gather meal satisfaction ratings and recommends portion sizes to reduce food waste. Additionally, users can schedule cleaning services, control room settings, and manage personal facility needs—all from a centralized dashboard. The admin panel enables efficient monitoring of user data, meal plans, and facility service requests, ensuring a seamless and sustainable living experience.',
+       features: ['Responsive design', 'Dark/light mode', 'Interactive UI elements', 'Optimized performance', 'SEO friendly'],
+       technologies: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion', 'Three.js'],
+       videoUrl: null,
+       tags: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion'],
+       github: 'https://github.com/Gituswaraj',
+       demo: 'tastemate-lilac.vercel.app'
+     }
     
   ];
 
   // Handle keyboard navigation for accessibility
   useEffect(() => {
+    console.log('Initial projects.length:', projects.length, 'activeIndex:', activeIndex);
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowRight' && activeIndex < projects.length - 1) {
         setActiveIndex(activeIndex + 1);
+        console.log('ArrowRight - new activeIndex:', activeIndex + 1);
       } else if (e.key === 'ArrowLeft' && activeIndex > 0) {
         setActiveIndex(activeIndex - 1);
+        console.log('ArrowLeft - new activeIndex:', activeIndex - 1);
       }
     };
     

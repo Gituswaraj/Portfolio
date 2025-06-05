@@ -32,6 +32,13 @@ const Certifications = () => {
       date: 'September 2024',
       image: '/WhatsApp Image 2025-03-13 at 18.01.00_accc8e4d.jpg', // Add your image
       
+    },
+    {
+      title: '3rd position at nagarro crack-a-code 3.0(National Lvl hackathon)',
+      issuer: 'Nagarro',
+      date: 'June 2025',
+      image: '/WhatsApp_Image_2025-06-06_at_00.52.22_d98e9ad6-removebg-preview.png', // Add your image
+      
     }
   ];
 
