@@ -11,9 +11,7 @@ import PageTransition from '@/components/ui/PageTransition';
 
 // Dynamically import heavy components with SSR disabled for better performance
 const CustomCursor = dynamic(() => import('@/components/ui/CustomCursor'), { ssr: false });
-const ParticleBackground = dynamic(() => import('@/components/ui/ParticleBackground'), { ssr: false });
 const ParallaxBackground = dynamic(() => import('@/components/ui/ParallaxBackground'), { ssr: false });
-const Galaxy = dynamic(() => import('@/components/ui/Galaxy'), { ssr: false });
 
 // Lazy load components that aren't needed immediately
 const Skills = dynamic(() => import('@/components/sections/Skills'));
@@ -58,31 +56,11 @@ export default function Home() {
 
   // Track scroll position for particle effect interaction with throttling
   const scrollRef = useRef(null);
-  const [scrollY, setScrollY] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
   // Set client-side flag
   useEffect(() => {
     setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    const handleScroll = () => {
-      if (!timeoutId) {
-        timeoutId = setTimeout(() => {
-          setScrollY(window.scrollY);
-          timeoutId = null;
-        }, 50); // Throttle to 50ms
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (timeoutId) clearTimeout(timeoutId);
-    };
   }, []);
 
   return (
