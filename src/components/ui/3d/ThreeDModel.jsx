@@ -1,38 +1,47 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, memo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, OrbitControls, Environment, PresentationControls } from '@react-three/drei';
 import { motion } from 'framer-motion';
-import * as THREE from 'three';
 
-// Component for a rotating 3D model
-const Model = ({ path, scale = 1, position = [0, 0, 0], rotation = [0, 0, 0] }) => {
+// Optimized Model component with proper suspense support
+const Model = memo(({ path, scale = 1, position = [0, 0, 0], rotation = [0, 0, 0], autoRotate = true }) => {
   const { scene } = useGLTF(path);
   const modelRef = useRef();
-  
-  useFrame((state) => {
-    if (modelRef.current) {
-      modelRef.current.rotation.y += 0.005;
+
+  useFrame(() => {
+    if (modelRef.current && autoRotate) {
+      modelRef.current.rotation.y += 0.003;
     }
   });
 
   return (
-    <primitive 
+    <primitive
       ref={modelRef}
-      object={scene} 
-      scale={scale} 
+      object={scene.clone()} // Clone to prevent shared state issues
+      scale={scale}
       position={position}
       rotation={rotation}
     />
   );
-};
+});
+
+Model.displayName = 'Model';
+
+// Loading placeholder for 3D model
+const ModelLoader = () => (
+  <mesh>
+    <boxGeometry args={[1, 1, 1]} />
+    <meshStandardMaterial color="#444" wireframe />
+  </mesh>
+);
 
 // Main component that wraps the 3D model in a Canvas
-const ThreeDModel = ({ 
-  modelPath, 
-  scale = 1, 
-  position = [0, 0, 0], 
+const ThreeDModel = memo(({
+  modelPath,
+  scale = 1,
+  position = [0, 0, 0],
   rotation = [0, 0, 0],
   autoRotate = true,
   enableZoom = false,
@@ -40,90 +49,103 @@ const ThreeDModel = ({
   className = '',
   backgroundColor = 'transparent'
 }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const [modelLoaded, setModelLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef(null);
 
-  // Set client-side flag and preload Three.js resources
+  // Use Intersection Observer for lazy loading
   useEffect(() => {
-    setIsClient(true);
-    
-    // Preload Three.js resources
-    const preloadThreeResources = async () => {
-      try {
-        // Force Three.js to initialize
-        new THREE.Scene();
-        // Wait a moment to ensure resources are loaded
-        setTimeout(() => setIsLoaded(true), 200);
-      } catch (error) {
-        console.error('Error preloading Three.js resources:', error);
-        // Still set as loaded even if there's an error
-        setIsLoaded(true);
-      }
-    };
-    
-    preloadThreeResources();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: '200px' }
+    );
 
-    // Preload the model
-    if (modelPath) {
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Preload the model when visible
+  useEffect(() => {
+    if (isVisible && modelPath) {
       useGLTF.preload(modelPath);
     }
-  }, [modelPath]);
-
-  // Render a placeholder if not on client side
-  if (!isClient) {
-    return (
-      <div 
-        className={`w-full h-full ${className} bg-gray-200 dark:bg-gray-800 flex items-center justify-center`}
-        style={{ background: backgroundColor !== 'transparent' ? backgroundColor : undefined }}
-      >
-        <div className="text-gray-500 dark:text-gray-400">Loading 3D model...</div>
-      </div>
-    );
-  }
+  }, [isVisible, modelPath]);
 
   return (
-    <motion.div 
+    <motion.div
+      ref={containerRef}
       className={`w-full h-full ${className}`}
       initial={{ opacity: 0 }}
-      animate={{ opacity: isLoaded ? 1 : 0 }}
-      transition={{ duration: 0.8 }}
+      animate={{ opacity: isVisible ? 1 : 0 }}
+      transition={{ duration: 0.5 }}
     >
-      {isLoaded && (
-        <Canvas 
+      {isVisible ? (
+        <Canvas
           camera={{ position: [0, 0, 5], fov: 45 }}
           style={{ background: backgroundColor }}
-          dpr={[1, 2]} // Limit pixel ratio for better performance
-          gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+          dpr={1}
+          gl={{
+            antialias: false,
+            alpha: true,
+            powerPreference: 'high-performance',
+            stencil: false
+          }}
+          frameloop="demand"
+          performance={{ min: 0.5 }}
         >
           <ambientLight intensity={0.5} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+          <directionalLight position={[10, 10, 10]} intensity={0.8} />
+
           <PresentationControls
             global
-            zoom={1.5}
+            zoom={1.2}
             rotation={[0, 0, 0]}
-            polar={[-Math.PI / 4, Math.PI / 4]}
-            azimuth={[-Math.PI / 4, Math.PI / 4]}
+            polar={[-Math.PI / 6, Math.PI / 6]}
+            azimuth={[-Math.PI / 6, Math.PI / 6]}
           >
-            <Model 
-              path={modelPath} 
-              scale={scale} 
-              position={position} 
-              rotation={rotation} 
-            />
+            <Suspense fallback={<ModelLoader />}>
+              <Model
+                path={modelPath}
+                scale={scale}
+                position={position}
+                rotation={rotation}
+                autoRotate={autoRotate}
+              />
+            </Suspense>
           </PresentationControls>
+
           <Environment preset="city" />
+
           {autoRotate && (
-            <OrbitControls 
-              autoRotate 
-              enableZoom={enableZoom} 
-              enablePan={enablePan} 
+            <OrbitControls
+              autoRotate
+              autoRotateSpeed={1}
+              enableZoom={enableZoom}
+              enablePan={enablePan}
+              enableDamping
+              dampingFactor={0.05}
             />
           )}
         </Canvas>
+      ) : (
+        <div
+          className="w-full h-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center rounded-lg"
+          style={{ background: backgroundColor !== 'transparent' ? backgroundColor : undefined }}
+        >
+          <div className="text-gray-500 dark:text-gray-400 animate-pulse">Loading 3D...</div>
+        </div>
       )}
     </motion.div>
   );
-};
+});
+
+ThreeDModel.displayName = 'ThreeDModel';
 
 export default ThreeDModel;

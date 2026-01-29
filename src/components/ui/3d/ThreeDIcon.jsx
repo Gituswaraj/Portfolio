@@ -1,149 +1,93 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, memo, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
-  Text,
   Box as DreiBox,
   Sphere,
   Torus,
   Cylinder,
   Cone,
-  Plane,
-  Circle,
   Ring,
-  Tetrahedron,
   Octahedron,
-  Dodecahedron,
   Icosahedron,
-  Capsule,
   TorusKnot,
-  Lathe,
-  Tube,
-  useContextBridge
 } from '@react-three/drei';
-import * as THREE from 'three';
 import { motion } from 'framer-motion';
 
-// 3D shape that represents a skill icon
-const IconShape = ({ shape = 'box', color = '#4285F4', hoverColor = '#5C9CFF' }) => {
+// Optimized 3D shape with reduced geometry complexity
+const IconShape = memo(({ shape = 'box', color = '#4285F4', hoverColor = '#5C9CFF' }) => {
   const meshRef = useRef();
+  const [currentColor, setCurrentColor] = useState(color);
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.x = Math.sin(state.clock.getElapsedTime()) * 0.3;
-      meshRef.current.rotation.y += 0.01;
+      // Simplified animation - less CPU intensive
+      meshRef.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.2;
+      meshRef.current.rotation.y += 0.008;
     }
   });
 
-  const renderShape = () => {
+  // Memoize the shape to prevent re-creation
+  const shapeElement = useMemo(() => {
+    // Reduced polygon counts for better performance
+    const shapeProps = { ref: meshRef };
+
     switch (shape.toLowerCase()) {
       case 'sphere':
-        return <Sphere ref={meshRef} args={[1, 32, 32]} />;
+        return <Sphere {...shapeProps} args={[1, 16, 16]} />;
       case 'torus':
-        return <Torus ref={meshRef} args={[0.7, 0.3, 16, 32]} />;
+        return <Torus {...shapeProps} args={[0.7, 0.3, 12, 24]} />;
       case 'cylinder':
-        return <Cylinder ref={meshRef} args={[1, 1, 2, 32]} />;
+        return <Cylinder {...shapeProps} args={[1, 1, 2, 16]} />;
       case 'cone':
-        return <Cone ref={meshRef} args={[1, 2, 32]} />;
+        return <Cone {...shapeProps} args={[1, 2, 16]} />;
       case 'box':
-        return <DreiBox ref={meshRef} args={[1.5, 1.5, 1.5]} />;
-      case 'plane':
-        return <Plane ref={meshRef} args={[5, 5]} />;
-      case 'circle':
-        return <Circle ref={meshRef} args={[1, 32]} />;
+        return <DreiBox {...shapeProps} args={[1.5, 1.5, 1.5]} />;
       case 'ring':
-        return <Ring ref={meshRef} args={[0.5, 1, 32]} />;
-      case 'tetrahedron':
-        return <Tetrahedron ref={meshRef} args={[1, 0]} />;
+        return <Ring {...shapeProps} args={[0.5, 1, 16]} />;
       case 'octahedron':
-        return <Octahedron ref={meshRef} args={[1, 0]} />;
-      case 'dodecahedron':
-        return <Dodecahedron ref={meshRef} args={[1, 0]} />;
+        return <Octahedron {...shapeProps} args={[1, 0]} />;
       case 'icosahedron':
-        return <Icosahedron ref={meshRef} args={[1, 0]} />;
-      case 'capsule':
-        return <Capsule ref={meshRef} args={[0.5, 1, 4, 8]} />;
+        return <Icosahedron {...shapeProps} args={[1, 0]} />;
       case 'torusknot':
-        return <TorusKnot ref={meshRef} args={[0.6, 0.2, 100, 16]} />;
+        return <TorusKnot {...shapeProps} args={[0.6, 0.2, 64, 8]} />;
       case 'lathe':
-        return (
-          <Lathe
-            ref={meshRef}
-            args={[
-              [...Array(10)].map(
-                (_, i) =>
-                  new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2)
-              ),
-              32,
-            ]}
-          />
-        );
+      case 'tetrahedron':
+        return <Octahedron {...shapeProps} args={[1, 0]} />;
       case 'tube':
-        return (
-          <Tube
-            ref={meshRef}
-            args={[
-              new THREE.CurvePath().add(
-                new THREE.CatmullRomCurve3([
-                  new THREE.Vector3(-2, 0, 0),
-                  new THREE.Vector3(0, 2, 0),
-                  new THREE.Vector3(2, 0, 0),
-                ])
-              ),
-              64,
-              0.1,
-              8,
-              false,
-            ]}
-          />
-        );
-      case 'triangle':
-        return (
-          <mesh ref={meshRef}>
-            <bufferGeometry attach="geometry">
-              <bufferAttribute
-                attach="attributes-position"
-                count={3}
-                array={new Float32Array([
-                  0, 1, 0,
-                  -1, -1, 0,
-                  1, -1, 0
-                ])}
-                itemSize={3}
-              />
-            </bufferGeometry>
-            <meshStandardMaterial color="orange" />
-          </mesh>
-        );
+      case 'capsule':
+        return <Cylinder {...shapeProps} args={[0.5, 0.5, 1.5, 12]} />;
       default:
-        return <DreiBox ref={meshRef} args={[1.5, 1.5, 1.5]} />;
+        return <DreiBox {...shapeProps} args={[1.5, 1.5, 1.5]} />;
     }
-  };
+  }, [shape]);
 
   return (
     <mesh
       onPointerOver={() => {
         document.body.style.cursor = 'pointer';
-        if (meshRef.current) {
-          meshRef.current.material.color.set(hoverColor);
-        }
+        setCurrentColor(hoverColor);
       }}
       onPointerOut={() => {
         document.body.style.cursor = 'auto';
-        if (meshRef.current) {
-          meshRef.current.material.color.set(color);
-        }
+        setCurrentColor(color);
       }}
     >
-      {renderShape()}
-      <meshStandardMaterial color={color} metalness={0.5} roughness={0.2} />
+      {shapeElement}
+      <meshStandardMaterial
+        color={currentColor}
+        metalness={0.4}
+        roughness={0.3}
+      />
     </mesh>
   );
-};
+});
+
+IconShape.displayName = 'IconShape';
 
 // Main component that wraps the 3D icon in a Canvas
-const ThreeDIcon = ({
+const ThreeDIcon = memo(({
   shape = 'box',
   color = '#4285F4',
   hoverColor = '#5C9CFF',
@@ -151,74 +95,78 @@ const ThreeDIcon = ({
   className = '',
   skill = ''
 }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef(null);
 
-  // Set client-side flag
+  // Use Intersection Observer for lazy loading
   useEffect(() => {
-    setIsClient(true);
-    
-    // Preload Three.js resources
-    const preloadThreeResources = async () => {
-      try {
-        // Force Three.js to initialize
-        new THREE.Scene();
-        // Wait a moment to ensure resources are loaded
-        setTimeout(() => setIsLoaded(true), 100);
-      } catch (error) {
-        console.error('Error preloading Three.js resources:', error);
-        // Still set as loaded even if there's an error
-        setIsLoaded(true);
-      }
-    };
-    
-    preloadThreeResources();
-  }, []);
-
-  if (!isClient) {
-    return (
-      <div 
-        className={`w-${size} h-${size} ${className} bg-gray-200 dark:bg-gray-700 rounded-md flex items-center justify-center`}
-        style={{ width: size, height: size }}
-      >
-        <div className="text-sm text-gray-500 dark:text-gray-400">{skill}</div>
-      </div>
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
     );
-  }
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <motion.div
-      className={`w-${size} h-${size} ${className}`}
+      ref={containerRef}
+      className={`${className}`}
       style={{ width: size, height: size }}
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: isLoaded ? 1 : 0, scale: isLoaded ? 1 : 0.8 }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ scale: 1.1 }}
+      animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.8 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ scale: 1.05 }}
     >
-      {isLoaded && (
-        <Canvas 
-          camera={{ position: [0, 0, 5], fov: 45 }}
-          dpr={[1, 2]} // Limit pixel ratio for better performance
-          gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      {isVisible ? (
+        <Canvas
+          camera={{ position: [0, 0, 4], fov: 50 }}
+          dpr={1} // Fixed DPR for consistent performance
+          gl={{
+            antialias: false, // Disable for better performance
+            alpha: true,
+            powerPreference: 'high-performance',
+            stencil: false,
+            depth: true
+          }}
+          frameloop="demand" // Only render when needed
+          performance={{ min: 0.5 }}
         >
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} intensity={1} />
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[5, 5, 5]} intensity={0.8} />
           <IconShape shape={shape} color={color} hoverColor={hoverColor} />
         </Canvas>
+      ) : (
+        <div
+          className="w-full h-full bg-gray-200 dark:bg-gray-700 rounded-md flex items-center justify-center"
+        >
+          <span className="text-xs text-gray-500 dark:text-gray-400">{skill}</span>
+        </div>
       )}
     </motion.div>
   );
-};
+});
+
+ThreeDIcon.displayName = 'ThreeDIcon';
 
 // Map skill names to shapes and colors
 export const getSkillIconProps = (skillName) => {
   const skillMap = {
-    'Java': { shape: 'lathe', color: '#f89820', hoverColor: '#ffac33' },
+    'Java': { shape: 'cylinder', color: '#f89820', hoverColor: '#ffac33' },
     'C++': { shape: 'box', color: '#044F88', hoverColor: '#0A6BBD' },
     'JavaScript': { shape: 'sphere', color: '#F7DF1E', hoverColor: '#FFF04D' },
     'React.js': { shape: 'torusknot', color: '#61DAFB', hoverColor: '#8AE7FF' },
-    'Next.js': { shape: 'tube', color: '#000000', hoverColor: '#333333' },
-    'Data Structures': { shape: 'tetrahedron', color: '#9C27B0', hoverColor: '#BA68C8' },
+    'Next.js': { shape: 'cylinder', color: '#000000', hoverColor: '#333333' },
+    'Data Structures': { shape: 'octahedron', color: '#9C27B0', hoverColor: '#BA68C8' },
     'Team Collaboration': { shape: 'octahedron', color: '#4CAF50', hoverColor: '#81C784' },
     'Problem Solving': { shape: 'cone', color: '#FF5722', hoverColor: '#FF8A65' },
     'Analytical Thinking': { shape: 'icosahedron', color: '#2196F3', hoverColor: '#64B5F6' },

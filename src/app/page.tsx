@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef,Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/sections/Hero';
@@ -13,6 +13,7 @@ import PageTransition from '@/components/ui/PageTransition';
 const CustomCursor = dynamic(() => import('@/components/ui/CustomCursor'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/ui/ParticleBackground'), { ssr: false });
 const ParallaxBackground = dynamic(() => import('@/components/ui/ParallaxBackground'), { ssr: false });
+const Galaxy = dynamic(() => import('@/components/ui/Galaxy'), { ssr: false });
 
 // Lazy load components that aren't needed immediately
 const Skills = dynamic(() => import('@/components/sections/Skills'));
@@ -30,7 +31,7 @@ export default function Home() {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
+
       setIsDarkMode(savedTheme === 'dark' || (!savedTheme && prefersDark));
     }
   }, []);
@@ -86,18 +87,11 @@ export default function Home() {
 
   return (
     <PageTransition location="home">
-      <div 
+      <div
         className="min-h-screen bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 transition-colors duration-300"
         ref={scrollRef}
       >
         {isClient && <CustomCursor darkMode={isDarkMode} />}
-
-        {/* Only render particle background on client side */}
-        {isClient && (
-          <div className="fixed inset-0 -z-10">
-            <ParticleBackground isDarkMode={isDarkMode} scrollFactor={scrollY * 0.01} />
-          </div>
-        )}
 
         <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
 
