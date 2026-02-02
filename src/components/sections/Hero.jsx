@@ -8,7 +8,14 @@ import dynamic from 'next/dynamic';
 // Dynamically import Galaxy to avoid SSR issues with WebGL
 const Galaxy = dynamic(() => import('@/components/ui/Galaxy'), { ssr: false });
 
+import { portfolioData } from '../portfolioData';
+import RotatingText from '../ui/RotatingText';
+import ScrambledText from '../ui/ScrambledText';
+import ProfileCard from '../ui/ProfileCard';
+
 const Hero = () => {
+  const { personalInfo, summary } = portfolioData;
+
   return (
     <section id="home" className="min-h-screen flex items-center relative overflow-hidden">
       {/* Galaxy background */}
@@ -31,7 +38,7 @@ const Hero = () => {
       </div>
 
       {/* Overlay gradient for better text readability */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-transparent to-purple-900/20 -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-blue-900/20 -z-10" />
 
       <div className="container mx-auto px-4 py-16 flex flex-col md:flex-row items-center justify-between gap-10">
         <motion.div
@@ -40,88 +47,121 @@ const Hero = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-white">
-            Hi, I'm <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-teal-500 text-transparent bg-clip-text">Swaraj Kumar</span>
-          </h1>
-          <h2 className="text-xl sm:text-2xl text-gray-300 mb-6">
-            Web Developer & Electronics Engineer
-          </h2>
-          <p className="text-gray-300 mb-8 max-w-lg">
-            I specialize in creating responsive web applications and innovative electronic solutions. With a background in project management and research, I bring a unique perspective to every project.
-          </p>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="inline-block px-3 py-1 mb-6 text-xs font-semibold tracking-wider text-blue-400 uppercase bg-blue-400/10 border border-blue-400/20 rounded-full"
+          >
+            Available for Opportunities
+          </motion.div>
 
-          <div className="flex flex-wrap gap-4 mb-8">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-white leading-tight">
+            Hi, I'm <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-teal-400 text-transparent bg-clip-text">Swaraj Kumar</span>
+          </h1>
+
+          <h2 className="text-xl sm:text-2xl font-medium text-gray-300 mb-6 flex items-center gap-3 overflow-hidden">
+            <span className="w-8 h-[2px] bg-blue-500 flex-shrink-0"></span>
+            <span className="text-gray-400">Professional</span>
+            <RotatingText
+              texts={['Full Stack Developer', 'Software Engineer', 'SDE Intern', 'Problem Solver']}
+              mainClassName="px-2 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg justify-center italic font-semibold"
+              staggerFrom="last"
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "-120%", opacity: 0 }}
+              staggerDuration={0.02}
+              splitLevelClassName="overflow-hidden"
+              transition={{ type: "spring", damping: 30, stiffness: 400 }}
+              rotationInterval={3000}
+            />
+          </h2>
+
+          <ScrambledText
+            className="text-gray-400 mb-8 max-w-lg leading-relaxed text-lg"
+            radius={80}
+            speed={0.4}
+            duration={1}
+          >
+            {summary}
+          </ScrambledText>
+
+          <div className="flex flex-wrap gap-4 mb-10">
             <motion.a
               href="#contact"
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 via-purple-500 to-teal-500 text-white rounded-full font-medium hover:shadow-lg transition-shadow"
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white rounded-xl font-bold hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all duration-300"
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.95 }}
             >
-              Contact Me
+              Get In Touch
             </motion.a>
             <motion.a
               href="#projects"
-              className="px-6 py-3 border border-gray-400 rounded-full font-medium text-white hover:bg-white/10 transition-colors"
+              className="px-8 py-4 border border-gray-700 rounded-xl font-bold text-white hover:bg-white/5 transition-all duration-300 backdrop-blur-sm"
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.95 }}
             >
-              View Projects
+              View Work
             </motion.a>
           </div>
 
-          <div className="flex gap-4">
-            <motion.a
-              href="https://github.com/Gituswaraj"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-300 hover:text-blue-400 text-xl"
-              whileHover={{ y: -3 }}
-              aria-label="GitHub Profile"
-            >
-              <FaGithub />
-            </motion.a>
-            <motion.a
-              href="https://www.linkedin.com/in/swaraj-kumar-07470b259?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3Byj5UsyKFRmeUk6BsUqZCGw%3D%3D"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-300 hover:text-blue-400 text-xl"
-              whileHover={{ y: -3 }}
-              aria-label="LinkedIn Profile"
-            >
-              <FaLinkedin />
-            </motion.a>
-            <motion.a
-              href="mailto:swarajkumar830@gmail.com"
-              className="text-gray-300 hover:text-blue-400 text-xl"
-              whileHover={{ y: -3 }}
-              aria-label="Email Me"
-            >
-              <FaEnvelope />
-            </motion.a>
+          <div className="flex gap-6 items-center">
+            <span className="text-gray-500 text-sm font-medium uppercase tracking-widest">Connect</span>
+            <div className="flex gap-4">
+              <motion.a
+                href={personalInfo.links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-700/50 transition-all"
+                whileHover={{ y: -3, scale: 1.1 }}
+                aria-label="GitHub Profile"
+              >
+                <FaGithub />
+              </motion.a>
+              <motion.a
+                href={personalInfo.links.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 hover:text-white hover:bg-blue-600 border border-gray-700/50 transition-all"
+                whileHover={{ y: -3, scale: 1.1 }}
+                aria-label="LinkedIn Profile"
+              >
+                <FaLinkedin />
+              </motion.a>
+              <motion.a
+                href={`mailto:${personalInfo.email}`}
+                className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 hover:text-white hover:bg-red-600/80 border border-gray-700/50 transition-all"
+                whileHover={{ y: -3, scale: 1.1 }}
+                aria-label="Email Me"
+              >
+                <FaEnvelope />
+              </motion.a>
+            </div>
           </div>
         </motion.div>
 
         <motion.div
-          className="md:w-1/2 flex justify-center"
+          className="md:w-1/2 flex justify-center perspective-1000"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <div className="relative w-64 h-64 sm:w-80 sm:h-80 bg-gradient-to-r from-blue-500 via-purple-500 to-teal-500 rounded-full p-1 shadow-xl">
-            <div className="absolute inset-1 bg-white dark:bg-gray-900 rounded-full overflow-hidden">
-              {/* Replace with your profile image */}
-              <div className="w-full h-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400">
-
-
-                <Image
-                  src="/portfolio.jpg.png"
-                  alt="Swaraj Kumar"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-          </div>
+          <ProfileCard
+            name="Swaraj Kumar"
+            title="Software Engineer"
+            handle="Gituswaraj"
+            status="Available for Hires"
+            contactText="Let's Talk"
+            avatarUrl="/portfolio.jpg.png"
+            showUserInfo={true}
+            enableTilt={true}
+            showBehindGlow={true}
+            behindGlowColor="rgba(59, 130, 246, 0.5)"
+            onContactClick={() => {
+              const contactSection = document.getElementById('contact');
+              if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth' });
+            }}
+          />
         </motion.div>
       </div>
     </section>

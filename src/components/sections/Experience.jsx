@@ -6,37 +6,38 @@ import { FaBriefcase } from 'react-icons/fa';
 import SectionTitle from '../ui/SectionTitle';
 import InteractiveTimeline from '../ui/InteractiveTimeline';
 import ScrollAnimation from '../ui/ScrollAnimation';
+import ScrambledText from '../ui/ScrambledText';
 
 const Experience = ({ darkMode }) => {
   const [viewMode, setViewMode] = useState('timeline'); // 'timeline' or 'cards'
-  
+
   const experiences = [
     {
       id: 'exp1',
-      title: 'Project Management Intern',
-      company: 'MDOC INFO PVT. LTD.',
-      period: 'July 2024 - September 2024',
-      startDate: '2024-07-01',
-      description: 'Led project management initiatives, coordinated with cross-functional teams, and implemented efficient workflows to ensure timely project delivery.',
-      skills: ['Project Management', 'Team Coordination', 'Workflow Optimization'],
+      title: 'SDE Intern',
+      company: 'Comtech Info Solutions Private Limited',
+      period: '07/2025 - 12/2025',
+      startDate: '2025-07-01',
+      description: 'Contributed to design and implementation of backend features using Node.js and RESTful APIs. Wrote clean, efficient, and well-documented code following best practices.',
+      skills: ['Node.js', 'REST APIs', 'SDLC', 'JavaScript'],
       achievements: [
-        'Streamlined project workflows resulting in 20% faster delivery times',
-        'Coordinated with 3 cross-functional teams to ensure project alignment',
-        'Implemented new documentation standards adopted company-wide'
+        'Implemented core backend features for client applications',
+        'Followed SDLC practices to deliver stable software increments',
+        'Participated in code reviews to ensure high-quality codebase'
       ]
     },
     {
       id: 'exp2',
-      title: 'Research Assistant',
-      company: 'CodeHelp',
-      period: 'Jul 2023 - Dec 2023',
-      startDate: '2023-07-01',
-      description: 'Conducted research on emerging technologies, assisted in developing educational content, and contributed to technical documentation for programming courses.',
-      skills: ['Technical Research', 'Content Development', 'Documentation'],
+      title: 'Tech Research Intern (Frontend-focused)',
+      company: 'mDoc Info Pvt. Ltd.',
+      period: '07/2024 - 12/2024',
+      startDate: '2024-07-01',
+      description: 'Improved React frontend performance and optimized user experience under high load. Conducted data-driven feature analysis.',
+      skills: ['React.js', 'Performance Optimization', 'Code-splitting', 'Lazy-loading'],
       achievements: [
-        'Researched and compiled data on 5 emerging technologies',
-        'Contributed to the development of 10+ educational modules',
-        'Improved technical documentation clarity through standardized templates'
+        'Reduced load-times through code-splitting and lazy-loading',
+        'Improved platform scalability through system testing',
+        'Conducted data-driven analysis to improve feature performance'
       ]
     }
   ];
@@ -45,19 +46,19 @@ const Experience = ({ darkMode }) => {
     <section id="experience" className="py-20">
       <div className="container mx-auto px-4">
         <ScrollAnimation animation="fadeInUp">
-          <SectionTitle 
-            title="Work Experience" 
+          <SectionTitle
+            title="Work Experience"
             subtitle="My professional journey in project management and research"
           />
         </ScrollAnimation>
-        
+
         <div className="mb-8 flex justify-center">
           <div className="inline-flex rounded-md shadow-sm bg-gray-100 dark:bg-gray-800 p-1">
             <button
               type="button"
               onClick={() => setViewMode('timeline')}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === 'timeline' 
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' 
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === 'timeline'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
             >
               Timeline View
@@ -65,15 +66,15 @@ const Experience = ({ darkMode }) => {
             <button
               type="button"
               onClick={() => setViewMode('cards')}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === 'cards' 
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' 
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === 'cards'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
             >
               Card View
             </button>
           </div>
         </div>
-        
+
         <ScrollAnimation animation="fadeIn" delay={0.2}>
           {viewMode === 'timeline' ? (
             <InteractiveTimeline experiences={experiences} darkMode={darkMode} />
@@ -81,10 +82,10 @@ const Experience = ({ darkMode }) => {
             <div className="relative">
               {/* Timeline line */}
               <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 h-full w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-teal-500 rounded-full hidden md:block"></div>
-              
+
               <div className="space-y-12">
                 {experiences.map((exp, index) => (
-                  <motion.div 
+                  <motion.div
                     key={exp.id}
                     className={`flex flex-col md:flex-row gap-8 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
                     initial={{ opacity: 0, y: 50 }}
@@ -107,10 +108,17 @@ const Experience = ({ darkMode }) => {
                             </div>
                           </div>
                           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{exp.period}</p>
-                          <p className="text-gray-600 dark:text-gray-300 mb-4">{exp.description}</p>
+                          <ScrambledText
+                            className="text-gray-600 dark:text-gray-300 mb-4 text-sm"
+                            radius={60}
+                            speed={0.5}
+                            duration={0.8}
+                          >
+                            {exp.description}
+                          </ScrambledText>
                           <div className="flex flex-wrap gap-2">
                             {exp.skills.map((skill, idx) => (
-                              <span 
+                              <span
                                 key={idx}
                                 className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white"
                               >

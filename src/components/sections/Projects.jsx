@@ -7,6 +7,7 @@ import ProjectCard from '../ui/ProjectCard';
 import ProjectDetail from '../ui/ProjectDetail';
 import { ThreeDProjectShowcase } from '../ui/3d';
 import ScrollAnimation from '../ui/ScrollAnimation';
+import ScrollStack, { ScrollStackItem } from '../ui/ScrollStack';
 
 const Projects = ({ darkMode }) => {
   const [viewMode, setViewMode] = useState('classic'); // Changed from '3d' to 'classic'
@@ -17,10 +18,10 @@ const Projects = ({ darkMode }) => {
     target: containerRef,
     offset: ['start end', 'end start']
   });
-  
+
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8]);
-  
+
   // Handle project selection for detailed view
   const handleProjectSelect = (project) => {
     setSelectedProject(project);
@@ -29,68 +30,41 @@ const Projects = ({ darkMode }) => {
   const handleCloseDetail = () => {
     setSelectedProject(null);
   };
-  
+
   const projects = [
-      {
-        title: 'TourPhin',
-        description: 'A travel companion app that helps users discover local attractions, plan itineraries, and navigate unfamiliar destinations.',
-        image: '/tourphinimg.png',
-        longDescription: 'TourPhin is a comprehensive travel companion app that helps users discover local attractions, plan detailed itineraries, and navigate unfamiliar destinations with ease. The app provides personalized recommendations based on user preferences and travel history.',
-        features: ['Interactive maps and navigation', 'Attraction recommendations', 'Itinerary planning', 'User reviews and ratings', 'Offline mode for travel without data'],
-        technologies: ['React Native', 'Firebase', 'Google Maps API', 'Node.js', 'Express'],
-        videoUrl: null,
-        tags: ['React Native', 'Firebase', 'Google Maps API', 'Node.js'],
-        github: 'https://github.com/Gituswaraj',
-        demo: 'https://tour-phin.vercel.app/'
+    {
+      title: 'TourPhin',
+      description: 'An AI-assisted travel platform that helps users discover personalized travel recommendations.',
+      image: '/tourphinimg.png',
+      longDescription: 'TourPhin is a responsive React.js frontend built with Tailwind CSS. It enables users to explore destinations and receive personalized travel recommendations. The project focused on high UI performance through efficient state management and clean component architecture.',
+      features: ['Personalized Travel Recommendations', 'Responsive Tailwind UI', 'Vercel Deployment', 'Optimized State Management'],
+      technologies: ['React.js', 'Tailwind CSS', 'Vercel', 'State Management'],
+      tags: ['React.js', 'Tailwind', 'AI'],
+      github: 'https://github.com/Gituswaraj/TourPhin',
+      demo: 'https://tour-phin.vercel.app/'
     },
     {
-      title: 'Proximity Sensor',
-      description: 'An IoT-based proximity detection system using Arduino and ultrasonic sensors for accurate distance measurement and obstacle detection.',
+      title: 'RCA - Root Cause Analysis',
+      description: 'A centralized system to identify, track, and analyze root causes of incidents.',
       image: '/proximity.webp',
-      longDescription: 'This IoT-based proximity detection system utilizes Arduino and ultrasonic sensors to provide accurate distance measurement and obstacle detection. The system can be configured for various applications including parking assistance, security systems, and automated door controls.',
-      features: ['Real-time distance measurement', 'Configurable detection range', 'LED and buzzer indicators', 'Low power consumption'],
-      technologies: ['Arduino', 'Ultrasonic Sensors', 'C++', 'Electronics'],
-      videoUrl: null,
-      tags: ['Arduino', 'IoT', 'Electronics', 'C++'],
-      demo: null
+      longDescription: 'Developed a management system for incident tracking and root cause analysis. Implemented structured workflows for issue logging, cause categorization, and corrective actions to enable data-driven decision-making.',
+      features: ['Incident Tracking', 'Root Cause Categorization', 'Corrective Action Workflows', 'Data-driven Reporting'],
+      technologies: ['MERN Stack', 'Data Analysis', 'React.js', 'Node.js'],
+      tags: ['MERN', 'Analysis', 'Full Stack'],
+      github: 'https://github.com/Gituswaraj',
+      demo: 'https://rca-beige-phi.vercel.app/'
     },
     {
-      title: 'E-cart Website',
-      description: 'A full-featured e-commerce platform with product catalog, shopping cart, user authentication, and payment integration.',
+      title: 'ArchGenie',
+      description: 'An automated tool to generate Entity-Relationship (ER) diagrams from system specifications.',
       image: '/ecart.jpg',
-      longDescription: 'A comprehensive e-commerce platform featuring product catalog management, shopping cart functionality, user authentication, and secure payment integration. The application provides an intuitive shopping experience with responsive design for all devices.',
-      features: ['User authentication and profiles', 'Product search and filtering', 'Shopping cart and checkout', 'Payment gateway integration', 'Order tracking'],
-      technologies: ['React.js', 'Node.js', 'Express', 'MongoDB', 'Stripe API'],
-      videoUrl: null,
-      tags: ['React.js', 'Node.js', 'MongoDB', 'Express'],
+      longDescription: 'ArchGenie helps engineers visualize dependencies and data flow by automatically creating ER diagrams. It reduces manual design effort and improves accuracy in database and system modeling.',
+      features: ['Automatic ER Diagram Generation', 'Software/Hardware Module Analysis', 'Dependency Visualization', 'System Architecture Planning'],
+      technologies: ['System Design', 'React.js', 'Database Modeling'],
+      tags: ['System Design', 'ER Diagrams', 'Architecture'],
       github: 'https://github.com/Gituswaraj',
-      demo: null
-    },
-    {
-      title: 'Portfolio Website',
-      description: 'A modern, responsive portfolio website built with Next.js and React to showcase skills, projects, and professional experience.',
-      image: '/portfolio.jpg.png',
-      longDescription: 'A modern, responsive portfolio website built with Next.js and React to showcase skills, projects, and professional experience. The site features smooth animations, dark mode support, and optimized performance for an exceptional user experience.',
-      features: ['Responsive design', 'Dark/light mode', 'Interactive UI elements', 'Optimized performance', 'SEO friendly'],
-      technologies: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion', 'Three.js'],
-      videoUrl: null,
-      tags: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion'],
-      github: 'https://github.com/Gituswaraj',
-      demo: 'portfolio-six-khaki-21.vercel.app'
-    },
-    {
-       title: 'Tastemate',
-       description: 'An AI-powered MERN stack web app that personalizes meals based on user preferences and reduces food waste in hostels/PGs. Includes smart facility control, chatbot feedback, and an admin panel for efficient resource management.',
-       image: '/tastemate-image.png',
-       longDescription: 'A full-stack AI-integrated web application built using the MERN stack, designed to optimize food distribution and facility management in hostels and PG accommodations. The system personalizes daily meal suggestions based on individual user preferences, eating habits, and feedback. It includes a smart chatbot that interacts with users to gather meal satisfaction ratings and recommends portion sizes to reduce food waste. Additionally, users can schedule cleaning services, control room settings, and manage personal facility needs—all from a centralized dashboard. The admin panel enables efficient monitoring of user data, meal plans, and facility service requests, ensuring a seamless and sustainable living experience.',
-       features: ['Responsive design', 'Dark/light mode', 'Interactive UI elements', 'Optimized performance', 'SEO friendly'],
-       technologies: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion', 'Three.js'],
-       videoUrl: null,
-       tags: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion'],
-       github: 'https://github.com/Gituswaraj',
-       demo: 'tastemate-lilac.vercel.app'
-     }
-    
+      demo: 'https://archi-genie.vercel.app/'
+    }
   ];
 
   // Handle keyboard navigation for accessibility
@@ -105,57 +79,95 @@ const Projects = ({ darkMode }) => {
         console.log('ArrowLeft - new activeIndex:', activeIndex - 1);
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeIndex, projects.length]);
 
   return (
-    <motion.section 
-      id="projects" 
+    <motion.section
+      id="projects"
       className="py-20 bg-gray-50 dark:bg-gray-900/30 overflow-hidden"
       ref={containerRef}
       style={{ opacity, scale }}
     >
       <div className="container mx-auto px-4">
         <ScrollAnimation animation="fadeInUp">
-          <SectionTitle 
-            title="My Projects" 
+          <SectionTitle
+            title="My Projects"
             subtitle="Explore some of my recent work in web development and electronics"
           />
         </ScrollAnimation>
-        
+
         <div className="mb-8 flex justify-center">
           <div className="inline-flex rounded-md shadow-sm bg-gray-100 dark:bg-gray-800 p-1">
             <button
               type="button"
-              onClick={() => setViewMode('3d')}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === '3d' 
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' 
+              onClick={() => setViewMode('stacked')}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === 'stacked'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
             >
-              3D Showcase
+              Stacked View
             </button>
             <button
               type="button"
               onClick={() => setViewMode('classic')}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === 'classic' 
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' 
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === 'classic'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
             >
               Classic View
             </button>
           </div>
         </div>
-        
+
         <ScrollAnimation animation="fadeIn" delay={0.2}>
-          {viewMode === '3d' ? (
-            <div className="relative h-[500px] w-full my-12 bg-gradient-to-b from-transparent to-gray-100 dark:to-gray-900/50 rounded-xl overflow-hidden">
-              <ThreeDProjectShowcase 
-                projects={projects} 
-                onSelectProject={handleProjectSelect}
-                darkMode={darkMode}
-              />
+          {viewMode === 'stacked' ? (
+            <div className="py-10">
+              <ScrollStack
+                useWindowScroll={false}
+                className="h-[600px] rounded-3xl border border-gray-200/50 dark:border-white/5 bg-gray-50/50 dark:bg-gray-900/20 backdrop-blur-sm"
+                itemStackDistance={40}
+                baseScale={0.9}
+                itemScale={0.02}
+                blurAmount={2}
+              >
+                {projects.map((project, index) => (
+                  <ScrollStackItem
+                    key={index}
+                    itemClassName="bg-white dark:bg-gray-800 border border-gray-200/50 dark:border-white/10"
+                  >
+                    <div className="flex flex-col md:flex-row gap-8 items-center h-full">
+                      <div className="w-full md:w-1/2 h-48 md:h-full relative rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700"
+                        />
+                      </div>
+                      <div className="w-full md:w-1/2 flex flex-col justify-center text-left">
+                        <span className="text-blue-500 font-bold mb-2 uppercase tracking-widest text-xs">Featured Project</span>
+                        <h3 className="text-3xl font-black mb-4 text-gray-900 dark:text-white leading-tight">{project.title}</h3>
+                        <p className="text-gray-600 dark:text-gray-400 mb-6 line-clamp-3 md:line-clamp-none leading-relaxed">{project.description}</p>
+                        <div className="flex flex-wrap gap-2 mb-8">
+                          {project.tags.map((tag, i) => (
+                            <span key={i} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs font-semibold">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => handleProjectSelect(project)}
+                          className="w-fit px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all hover:shadow-xl hover:-translate-y-1"
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </ScrollStackItem>
+                ))}
+              </ScrollStack>
             </div>
           ) : (
             <>
@@ -170,10 +182,10 @@ const Projects = ({ darkMode }) => {
                   />
                 ))}
               </div>
-              
+
               {/* Horizontal scroll container */}
               <div className="relative overflow-hidden py-4">
-                <motion.div 
+                <motion.div
                   className="flex transition-transform duration-500 ease-out"
                   style={{ transform: `translateX(calc(-${activeIndex * 100}% / ${projects.length}))` }}
                 >
@@ -188,7 +200,7 @@ const Projects = ({ darkMode }) => {
                       whileHover={{ y: -10 }}
                     >
                       <div onClick={() => handleProjectSelect(project)}>
-                        <ProjectCard 
+                        <ProjectCard
                           title={project.title}
                           description={project.description}
                           image={project.image}
@@ -201,13 +213,13 @@ const Projects = ({ darkMode }) => {
                   ))}
                 </motion.div>
               </div>
-              
+
               {/* Navigation buttons */}
               <div className="flex justify-center mt-8 gap-4">
                 <motion.button
                   onClick={() => activeIndex > 0 && setActiveIndex(activeIndex - 1)}
                   className={`px-4 py-2 rounded-full border border-gray-300 dark:border-gray-700 ${activeIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                  whileHover={activeIndex > 0 ? { scale: 1.05 } : {}}  
+                  whileHover={activeIndex > 0 ? { scale: 1.05 } : {}}
                   whileTap={activeIndex > 0 ? { scale: 0.95 } : {}}
                   disabled={activeIndex === 0}
                   aria-label="Previous project"
@@ -228,12 +240,12 @@ const Projects = ({ darkMode }) => {
             </>
           )}
         </ScrollAnimation>
-        
+
         {/* Project Detail Modal */}
         {selectedProject && (
-          <ProjectDetail 
-            project={selectedProject} 
-            onClose={handleCloseDetail} 
+          <ProjectDetail
+            project={selectedProject}
+            onClose={handleCloseDetail}
           />
         )}
       </div>

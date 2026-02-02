@@ -10,7 +10,6 @@ import ScrollAnimation from '@/components/ui/ScrollAnimation';
 import PageTransition from '@/components/ui/PageTransition';
 
 // Dynamically import heavy components with SSR disabled for better performance
-const CustomCursor = dynamic(() => import('@/components/ui/CustomCursor'), { ssr: false });
 const ParallaxBackground = dynamic(() => import('@/components/ui/ParallaxBackground'), { ssr: false });
 
 // Lazy load components that aren't needed immediately
@@ -69,8 +68,6 @@ export default function Home() {
         className="min-h-screen bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 transition-colors duration-300"
         ref={scrollRef}
       >
-        {isClient && <CustomCursor darkMode={isDarkMode} />}
-
         <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
 
         {/* Hero section with parallax */}

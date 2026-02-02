@@ -90,25 +90,23 @@ const ThreeDModel = memo(({
         <Canvas
           camera={{ position: [0, 0, 5], fov: 45 }}
           style={{ background: backgroundColor }}
-          dpr={1}
+          dpr={[1, 2]}
           gl={{
-            antialias: false,
+            antialias: true,
             alpha: true,
-            powerPreference: 'high-performance',
-            stencil: false
+            powerPreference: 'high-performance'
           }}
-          frameloop="demand"
-          performance={{ min: 0.5 }}
         >
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[10, 10, 10]} intensity={0.8} />
+          <ambientLight intensity={0.7} />
+          <directionalLight position={[10, 10, 10]} intensity={1} />
 
           <PresentationControls
             global
-            zoom={1.2}
+            config={{ mass: 2, tension: 500 }}
+            snap={{ mass: 4, tension: 1500 }}
             rotation={[0, 0, 0]}
-            polar={[-Math.PI / 6, Math.PI / 6]}
-            azimuth={[-Math.PI / 6, Math.PI / 6]}
+            polar={[-Math.PI / 4, Math.PI / 4]}
+            azimuth={[-Math.PI / 4, Math.PI / 4]}
           >
             <Suspense fallback={<ModelLoader />}>
               <Model
@@ -123,16 +121,12 @@ const ThreeDModel = memo(({
 
           <Environment preset="city" />
 
-          {autoRotate && (
-            <OrbitControls
-              autoRotate
-              autoRotateSpeed={1}
-              enableZoom={enableZoom}
-              enablePan={enablePan}
-              enableDamping
-              dampingFactor={0.05}
-            />
-          )}
+          <OrbitControls
+            enableZoom={enableZoom}
+            enablePan={enablePan}
+            enableDamping
+            dampingFactor={0.05}
+          />
         </Canvas>
       ) : (
         <div

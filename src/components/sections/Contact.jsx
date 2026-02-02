@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaPaperPlane, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import SectionTitle from '../ui/SectionTitle';
 import ScrollAnimation from '../ui/ScrollAnimation';
+import RotatingText from '../ui/RotatingText';
 
 const Contact = ({ darkMode }) => {
   const [formData, setFormData] = useState({
@@ -18,36 +19,36 @@ const Contact = ({ darkMode }) => {
   const [submitStatus, setSubmitStatus] = useState(null); // null, 'success', 'error'
   const [isClient, setIsClient] = useState(false);
   const formRef = useRef(null);
-  
+
   // Set isClient to true when component mounts (client-side only)
   useEffect(() => {
     setIsClient(true);
   }, []);
-  
+
   // Form validation
   const validateForm = () => {
     const errors = {};
-    
+
     if (!formData.name.trim()) {
       errors.name = 'Name is required';
     }
-    
+
     if (!formData.email.trim()) {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = 'Please enter a valid email address';
     }
-    
+
     if (!formData.subject.trim()) {
       errors.subject = 'Subject is required';
     }
-    
+
     if (!formData.message.trim()) {
       errors.message = 'Message is required';
     } else if (formData.message.trim().length < 10) {
       errors.message = 'Message must be at least 10 characters';
     }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -58,7 +59,7 @@ const Contact = ({ darkMode }) => {
       ...prev,
       [name]: value
     }));
-    
+
     // Clear error for this field when user types
     if (formErrors[name]) {
       setFormErrors(prev => ({
@@ -70,7 +71,7 @@ const Contact = ({ darkMode }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Validate form before submission
     if (!validateForm()) {
       // Scroll to the first error
@@ -83,19 +84,19 @@ const Contact = ({ darkMode }) => {
       }
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       // Use a fixed success value for server-side rendering
       // and only generate random value on client-side
       // This prevents hydration mismatch
       const isSuccess = isClient ? Math.random() < 0.9 : true;
-      
+
       setIsSubmitting(false);
       setSubmitStatus(isSuccess ? 'success' : 'error');
-      
+
       if (isSuccess) {
         setFormData({
           name: '',
@@ -104,7 +105,7 @@ const Contact = ({ darkMode }) => {
           message: ''
         });
       }
-      
+
       // Reset status after 5 seconds
       setTimeout(() => {
         setSubmitStatus(null);
@@ -128,7 +129,7 @@ const Contact = ({ darkMode }) => {
     {
       icon: <FaMapMarkerAlt />,
       title: 'Location',
-      value: 'Delhi, India',
+      value: 'New Delhi, India',
       link: null
     }
   ];
@@ -137,22 +138,36 @@ const Contact = ({ darkMode }) => {
     <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-900/30">
       <div className="container mx-auto px-4">
         <ScrollAnimation animation="fadeInUp">
-          <SectionTitle 
-            title="Contact Me" 
+          <SectionTitle
+            title="Contact Me"
             subtitle="Get in touch for collaborations or inquiries"
           />
         </ScrollAnimation>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <ScrollAnimation animation="fadeInLeft" className="lg:col-span-1">
-            <h3 className="text-xl font-bold mb-6">Let's Connect</h3>
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+              Let's
+              <RotatingText
+                texts={['Collaborate', 'Innovate', 'Build', 'Create', 'Design']}
+                mainClassName="px-2 py-0.5 bg-blue-500 text-white rounded-md inline-flex"
+                staggerFrom="first"
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: "-120%", opacity: 0 }}
+                staggerDuration={0.02}
+                splitLevelClassName="overflow-hidden"
+                transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                rotationInterval={2500}
+              />
+            </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-8">
               I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
             </p>
-            
+
             <div className="space-y-4">
               {contactInfo.map((info, index) => (
-                <motion.div 
+                <motion.div
                   key={index}
                   className="flex items-center p-4 bg-white dark:bg-gray-800/30 rounded-lg shadow-sm backdrop-blur-sm border border-gray-200 dark:border-gray-700/50"
                   initial={{ opacity: 0, x: -20 }}
@@ -167,8 +182,8 @@ const Contact = ({ darkMode }) => {
                   <div>
                     <h4 className="font-medium">{info.title}</h4>
                     {info.link ? (
-                      <a 
-                        href={info.link} 
+                      <a
+                        href={info.link}
                         className="text-sm text-blue-500 hover:underline"
                       >
                         {info.value}
@@ -181,9 +196,9 @@ const Contact = ({ darkMode }) => {
               ))}
             </div>
           </ScrollAnimation>
-          
+
           <ScrollAnimation animation="fadeInRight" className="lg:col-span-2">
-            <motion.div 
+            <motion.div
               className="bg-white dark:bg-gray-800/30 rounded-lg p-6 shadow-md backdrop-blur-sm border border-gray-200 dark:border-gray-700/50"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -191,10 +206,10 @@ const Contact = ({ darkMode }) => {
               viewport={{ once: true }}
             >
               <h3 className="text-xl font-bold mb-6">Send Me a Message</h3>
-              
+
               <AnimatePresence>
                 {submitStatus === 'success' && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
@@ -204,9 +219,9 @@ const Contact = ({ darkMode }) => {
                     Thank you for your message! I'll get back to you soon.
                   </motion.div>
                 )}
-                
+
                 {submitStatus === 'error' && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
@@ -217,7 +232,7 @@ const Contact = ({ darkMode }) => {
                   </motion.div>
                 )}
               </AnimatePresence>
-              
+
               <form onSubmit={handleSubmit} ref={formRef}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                   <div>
@@ -249,7 +264,7 @@ const Contact = ({ darkMode }) => {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="mb-6">
                   <label htmlFor="subject" className="block text-sm font-medium mb-2">Subject</label>
                   <input
@@ -264,7 +279,7 @@ const Contact = ({ darkMode }) => {
                     <p className="mt-1 text-sm text-red-500 dark:text-red-400">{formErrors.subject}</p>
                   )}
                 </div>
-                
+
                 <div className="mb-6">
                   <label htmlFor="message" className="block text-sm font-medium mb-2">Your Message</label>
                   <textarea
@@ -279,7 +294,7 @@ const Contact = ({ darkMode }) => {
                     <p className="mt-1 text-sm text-red-500 dark:text-red-400">{formErrors.message}</p>
                   )}
                 </div>
-                
+
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
@@ -302,7 +317,7 @@ const Contact = ({ darkMode }) => {
                       </>
                     )}
                   </span>
-                  <motion.div 
+                  <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600"
                     initial={{ x: '-100%' }}
                     animate={{ x: isSubmitting ? '0%' : '-100%' }}
@@ -311,10 +326,10 @@ const Contact = ({ darkMode }) => {
                 </motion.button>
               </form>
             </motion.div>
-            </ScrollAnimation>
-          </div>
+          </ScrollAnimation>
         </div>
-      
+      </div>
+
     </section>
   );
 };

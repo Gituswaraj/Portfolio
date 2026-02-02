@@ -3,10 +3,11 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
+import ScrambledText from './ui/ScrambledText';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  
+
   return (
     <footer className="py-8 bg-gray-100 dark:bg-gray-900/50">
       <div className="container mx-auto px-4">
@@ -15,11 +16,16 @@ const Footer = () => {
             <Link href="#home" className="text-xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-teal-500 text-transparent bg-clip-text">
               Swaraj Kumar
             </Link>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            <ScrambledText
+              className="text-sm text-gray-600 dark:text-gray-400 mt-2"
+              radius={40}
+              speed={0.6}
+              duration={0.7}
+            >
               Web Developer & Electronics Engineer
-            </p>
+            </ScrambledText>
           </div>
-          
+
           <div className="flex space-x-4 mb-4 md:mb-0">
             <motion.a
               href="https://github.com/Gituswaraj"
@@ -50,7 +56,7 @@ const Footer = () => {
               <FaEnvelope />
             </motion.a>
           </div>
-          
+
           <div className="text-sm text-gray-600 dark:text-gray-400">
             © {currentYear} Swaraj Kumar. All rights reserved.
           </div>

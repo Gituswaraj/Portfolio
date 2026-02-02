@@ -7,120 +7,81 @@ const CustomCursor = ({ darkMode }) => {
   // Use motion values for smoother animation
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
-  
+
   // Add spring physics for more natural movement
   const springConfig = { damping: 25, stiffness: 700 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
-  
+
   const [cursorVariant, setCursorVariant] = useState('default');
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    // Track mouse position with smoother animation
+    // Track mouse position
     const mouseMove = (e) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
-      
-      // Set cursor as active once mouse moves
+
+      // Ensure cursor is hidden
+      if (document.body.style.cursor !== 'none') {
+        document.body.style.cursor = 'none';
+      }
+
       if (!isActive) {
         setIsActive(true);
       }
     };
 
-    // Add event listeners for cursor interactions with additional effects
-    const handleLinkHover = () => {
-      setCursorVariant('link');
-      document.body.style.cursor = 'none';
-    };
-    
-    const handleButtonHover = () => {
-      setCursorVariant('button');
-      document.body.style.cursor = 'none';
-    };
-    
-    const handleTextHover = () => {
-      setCursorVariant('text');
-      document.body.style.cursor = 'none';
-    };
-    
-    const handleImageHover = () => {
-      setCursorVariant('image');
-      document.body.style.cursor = 'none';
-    };
-    
-    const handleDefaultCursor = () => {
-      setCursorVariant('default');
-      document.body.style.cursor = 'none';
-    };
-    
-    // Handle mouse down/up for click effect
+    // Add event listeners for cursor interactions
+    const handleLinkHover = () => setCursorVariant('link');
+    const handleButtonHover = () => setCursorVariant('button');
+    const handleTextHover = () => setCursorVariant('text');
+    const handleImageHover = () => setCursorVariant('image');
+
+    const handleDefaultCursor = () => setCursorVariant('default');
+
     const handleMouseDown = () => setCursorVariant('clicked');
     const handleMouseUp = () => setCursorVariant(prev => prev === 'clicked' ? 'default' : prev);
 
-    // Add mouse move listener
+    // Initial hide
+    document.body.style.cursor = 'none';
+
     window.addEventListener('mousemove', mouseMove);
 
-    // Add hover listeners to interactive elements with more specific selectors
-    const links = document.querySelectorAll('a, .project-card, .nav-link, [data-cursor="link"]');
-    const buttons = document.querySelectorAll('button, .btn, input[type="submit"], [data-cursor="button"]');
-    const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, [data-cursor="text"]');
-    const imageElements = document.querySelectorAll('img, .image-container, [data-cursor="image"]');
+    // Setup dynamic listeners for elements like modals
+    const setupListeners = () => {
+      const links = document.querySelectorAll('a, button, .project-card, [role="button"], .nav-link');
+      const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, span');
 
-    links.forEach(link => {
-      link.addEventListener('mouseenter', handleLinkHover);
-      link.addEventListener('mouseleave', handleDefaultCursor);
-    });
-
-    buttons.forEach(button => {
-      button.addEventListener('mouseenter', handleButtonHover);
-      button.addEventListener('mouseleave', handleDefaultCursor);
-    });
-
-    textElements.forEach(element => {
-      element.addEventListener('mouseenter', handleTextHover);
-      element.addEventListener('mouseleave', handleDefaultCursor);
-    });
-    
-    imageElements.forEach(element => {
-      element.addEventListener('mouseenter', handleImageHover);
-      element.addEventListener('mouseleave', handleDefaultCursor);
-    });
-    
-    // Add click listeners for cursor animation
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-
-    // Clean up event listeners
-    return () => {
-      window.removeEventListener('mousemove', mouseMove);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
-      
       links.forEach(link => {
         link.removeEventListener('mouseenter', handleLinkHover);
         link.removeEventListener('mouseleave', handleDefaultCursor);
-      });
-
-      buttons.forEach(button => {
-        button.removeEventListener('mouseenter', handleButtonHover);
-        button.removeEventListener('mouseleave', handleDefaultCursor);
+        link.addEventListener('mouseenter', handleLinkHover);
+        link.addEventListener('mouseleave', handleDefaultCursor);
       });
 
       textElements.forEach(element => {
         element.removeEventListener('mouseenter', handleTextHover);
         element.removeEventListener('mouseleave', handleDefaultCursor);
+        element.addEventListener('mouseenter', handleTextHover);
+        element.addEventListener('mouseleave', handleDefaultCursor);
       });
-      
-      imageElements.forEach(element => {
-        element.removeEventListener('mouseenter', handleImageHover);
-        element.removeEventListener('mouseleave', handleDefaultCursor);
-      });
-      
-      // Reset cursor style
-      document.body.style.cursor = '';
     };
-  }, []);
+
+    setupListeners();
+    const interval = setInterval(setupListeners, 1500);
+
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', mouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+      clearInterval(interval);
+      document.body.style.cursor = 'auto';
+    };
+  }, [isActive]);
 
   // Enhanced cursor variants for different states with dark mode support
   const variants = {
@@ -215,7 +176,7 @@ const CustomCursor = ({ darkMode }) => {
     <>
       <style jsx global>{`
         .custom-cursor {
-          cursor: none;
+          cursor: none !important;
         }
         .custom-cursor * {
           cursor: none !important;
@@ -224,27 +185,32 @@ const CustomCursor = ({ darkMode }) => {
           .cursor-dot, .cursor-ring {
             display: none !important;
           }
+          .custom-cursor, .custom-cursor * {
+            cursor: auto !important;
+          }
         }
       `}</style>
       <motion.div
-        className="cursor-ring fixed top-0 left-0 rounded-full pointer-events-none z-50 hidden md:block backdrop-blur-sm"
+        className="cursor-ring fixed top-0 left-0 rounded-full pointer-events-none z-[9999] hidden md:block backdrop-blur-[2px]"
         variants={variants}
         animate={cursorVariant}
         style={{
           translateX: cursorXSpring,
           translateY: cursorYSpring,
           x: '-50%',
-          y: '-50%'
+          y: '-50%',
+          pointerEvents: 'none'
         }}
       />
       <motion.div
-        className={`cursor-dot fixed top-0 left-0 w-3 h-3 rounded-full pointer-events-none z-50 hidden md:block ${darkMode ? 'bg-blue-400' : 'bg-blue-500'}`}
+        className={`cursor-dot fixed top-0 left-0 w-2.5 h-2.5 rounded-full pointer-events-none z-[9999] hidden md:block ${darkMode ? 'bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.8)]' : 'bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.5)]'}`}
         style={{
           translateX: cursorX,
           translateY: cursorY,
           x: '-50%',
           y: '-50%',
-          opacity: isActive ? 1 : 0
+          opacity: isActive ? 1 : 0,
+          pointerEvents: 'none'
         }}
         transition={{
           type: 'spring',
@@ -252,7 +218,7 @@ const CustomCursor = ({ darkMode }) => {
           opacity: { duration: 0.3 }
         }}
         animate={{
-          scale: cursorVariant === 'clicked' ? 0.5 : 1
+          scale: cursorVariant === 'clicked' ? 0.6 : 1
         }}
       />
     </>
